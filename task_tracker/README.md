@@ -9,9 +9,11 @@ This project is a solution to [task-tracker](https://roadmap.sh/projects/task-tr
 
 ## Installation
 
-`git clone https://github.com/justPeterLee/Backend-Roadmap-Projects.git<br> 
+<code>
+git clone https://github.com/justPeterLee/Backend-Roadmap-Projects.git<br> 
 cd task_tracker<br>
 node index`
+</code>
 
 ## Usage
 
@@ -37,7 +39,8 @@ task-cli> list done
 ```
 
 - Add a Task
-  `task-cli> add "Task description"`
+
+`task-cli> add "Task description"`
 
 - Update a Task
 
