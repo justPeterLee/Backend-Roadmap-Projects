@@ -37,6 +37,7 @@ utility functions
 
 // interpret user input by breaking strings into sections
 function interpretInput(input) {
+    // check to see if input is empty
     if (!input.trim()) {
         console.log("\x1b[31m%s\x1b[0m", `ERROR: invalid input --> "${input}"\n`);
         return
@@ -52,6 +53,7 @@ function interpretInput(input) {
         return
     }
 
+    // call action function based on input
     taskActions[actionFormated](inputFormated);
 }
 
@@ -76,56 +78,67 @@ function getList() {
     console.log("\x1b[31m%s\x1b[0m", "ERROR: unable to find db.json file within directory");
     console.log("DATABASE CREATED: any old task may have been deleted");
 
+    // create new db.json if unable to find file
     fs.writeFileSync(`${__dirname}/db.json`, '{}');
     return {};
 }
 
 
 function generateUID() {
-    // get list
+    // get task's IDs
     const listIDs = Object.keys(getList()).map((id) => parseInt(id));
+
+
     if (listIDs.length === 0) {
         return 0;
     }
+
+    // sort IDs from smallest to larget (return largest +1)
     listIDs.sort((a, b) => { a - b });
     return listIDs[listIDs.length - 1] + 1;
 }
 
+// function to update DB
 function mutateList(task = {}) {
     let list = getList();
 
+    // task provided must have a valid ID with correct type
     if (task.id == undefined || typeof task.id != 'number') {
         console.log("\x1b[31m%s\x1b[0m", `ERROR: unable to mutatle list. Invalid ID --> ${task}`);
         return false;
     }
 
+    // update list by adding task
     list = { ...list, [task.id]: { ...task } };
 
 
     fs.writeFileSync(`${__dirname}/db.json`, JSON.stringify(list, null, 2));
-    return true;
+    return true; // if task is successfully written, return true (should be a promise)
 }
 
 function findTask(id) {
     const list = getList();
-    return list[id];
+    return list[id]; // return unidentify if task ID doesn't exist
 }
 
 function idValidator(id) {
+    // valid ID formate
     if (isNaN(Number(id))) {
         console.log("\x1b[31m%s\x1b[0m", `ERROR: invalid task ID --> ${id}`);
         return false;
     }
 
+    // checking if task exists
     const taskInformation = findTask(id);
     if (taskInformation === undefined) {
         console.log("\x1b[31m%s\x1b[0m", `ERROR: task with ID number doesn't exists --> ${id}`);
         return false;
     }
 
-    return taskInformation;
+    return taskInformation; // probably shouldn't return task info to reduce "complexity"
 }
 
+// call Mutate List (checks if action failed (should use async))
 function callMutateList(taskInformation, action = "", errorMessage = "") {
     if (mutateList(taskInformation)) {
         console.log("\x1b[32m%s\x1b[0m", `COMPLETE: ${action}`);
@@ -148,17 +161,17 @@ function addTask(input) {
         return;
     }
 
-    // validated task format
+    // formats user's input
     const taskWordList = input.filter((word, index) => { if (index !== 0) return word });
     const task = taskWordList.join(" ");
 
+    // validate user input for task's description
     if (!task.startsWith('"') || !task.endsWith('"')) {
         console.log("\x1b[31m%s\x1b[0m", `ERROR: invalid task being added (check if double quotation is added "") --> ${task}`);
         return
     }
 
     const uid = generateUID();
-
     callMutateList({ id: uid, description: task, status: 'todo', createdAt: new Date().toString(), updatedAt: new Date().toString() }, "ADDED (1) NEW TASK")
 }
 
@@ -175,10 +188,11 @@ function updateTask(input) {
         return;
     }
 
-    // validate task input
+    // formate user's input
     const taskWordList = input.filter((word, index) => { if (index !== 0 && index !== 1) return word });
     const task = taskWordList.join(" ");
 
+    // validate task input
     if (!task.startsWith('"') || !task.endsWith('"')) {
         console.log("\x1b[31m%s\x1b[0m", `ERROR: invalid task being added (check if double quotation is added "") --> ${task}`);
         return
@@ -189,11 +203,13 @@ function updateTask(input) {
 }
 
 function deleteTask(input) {
+    // validate arguments
     if (input.length != 2) {
         console.log("\x1b[31m%s\x1b[0m", `ERROR: invalid arguments for deleting a task --> ${input}`);
         return
     }
 
+    // validate id
     if (!idValidator(input[1])) {
         return;
     }
@@ -206,6 +222,7 @@ function deleteTask(input) {
 }
 
 function markInProgress(input) {
+    // validate arguments 
     if (input.length != 2) {
         console.log("\x1b[31m%s\x1b[0m", `ERROR: invalid arguments for mark in progress --> ${input}`);
         return;
@@ -220,11 +237,13 @@ function markInProgress(input) {
 }
 
 function markDone(input) {
+    // validates arguments
     if (input.length != 2) {
         console.log("\x1b[31m%s\x1b[0m", `ERROR: invalid arguments for mark done --> ${input}`);
         return;
     }
 
+    // validates task id and checks if task exists (returns task)
     const taskInformation = (idValidator(input[1]));
     if (!taskInformation) {
         return;
@@ -235,6 +254,7 @@ function markDone(input) {
 }
 
 function showList(input) {
+    // validates arguments
     if (input.length != 1 && input.length != 2) {
         console.log("\x1b[31m%s\x1b[0m", `ERROR: invalid arguments for list --> ${input}`);
         return;
@@ -244,6 +264,7 @@ function showList(input) {
     const listID = Object.keys(list);
     const listFilter = input[1];
 
+    // show list depending on user's input (filter based on task's "status")
     if (input.length === 1) {
         console.log(list);
         return
