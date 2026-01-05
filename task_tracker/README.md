@@ -11,11 +11,13 @@ This project is a solution to [task-tracker](https://roadmap.sh/projects/task-tr
 
 **Clone the Repository**
 
-    ```bash
-    git clone https://github.com/justPeterLee/Backend-Roadmap-Projects.git
-    cd task_tracker
-    node index
-    ```
+To run application, clone repositiory and run index in terminal. After that, the application will run via readline through node, allowing you to interact directly through the terminal.
+
+```bash
+git clone https://github.com/justPeterLee/Backend-Roadmap-Projects.git
+cd task_tracker
+node index
+```
 
 ## Usage
 
