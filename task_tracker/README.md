@@ -11,7 +11,7 @@ This project is a solution to [task-tracker](https://roadmap.sh/projects/task-tr
 
 **Clone the Repository**
 
-    ``` bash
+    ```bash
     git clone https://github.com/justPeterLee/Backend-Roadmap-Projects.git
     cd task_tracker
     node index
